@@ -1,0 +1,37 @@
+Sistema de Gerenciamento de Produtos e Vendas (Mini e-commerce)
+Data de conclusão 8 de agosto de 2025 às 23:59
+Mini e-commerce
+Instruções
+🎯 Objeto:
+Desenvolver um sistema web para gestão de produtos, clientes e pedidos de venda, simulando um mini e-commerce.
+
+🧾 Descrição:
+O sistema permitirá a visualização, cadastro e manutenção de produtos, clientes e pedidos. A proposta simula o funcionamento interno de uma loja virtual, focando no gerenciamento dos dados e no fluxo de pedidos. O sistema não precisa possuir integração com meios de pagamento.
+
+✅ Funcionalidades Requeridas (MVP):
+- CRUD de produtos com nome, descrição, preço, estoque e imagem.
+- CRUD de clientes com nome, e-mail, telefone e endereço.
+- CRUD de pedidos de venda contendo múltiplos produtos e cliente vinculado.
+- Listagem de pedidos por cliente e detalhamento dos produtos vendidos.
+- Autenticação de usuários (login/logout).
+- Validações de formulário e controle de permissões básicas.
+- Templates estilizados com Bootstrap.
+- Upload de imagens de produtos (Cloudinary).
+- Deploy no Render.
+
+🚀 Funcionalidades Estendidas (Desafio):
+- Sistema de carrinho de compras com adição/remoção dinâmica de produtos.
+- Filtros de produtos por faixa de preço, estoque e nome.
+- Envio automático de e-mail de confirmação de pedido.
+- Dashboard com métricas de vendas e estoque.
+- API para listagem de produtos e pedidos.
+
+📊 Critérios de Avaliação:
+- Organização e estrutura do projeto Django.
+- Clareza na modelagem de dados.
+- Uso de Django ORM e CBVs adequadamente.
+- Funcionalidade e interatividade dos formulários.
+- Aplicação de boas práticas (uso de variáveis de ambiente, separação de responsabilidades).
+- Implementação do sistema de autenticação e permissões.
+- Deploy funcional com dados acessíveis.
+- Apresentação clara da aplicação.

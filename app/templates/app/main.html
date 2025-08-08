@@ -1,0 +1,99 @@
+{% extends 'app/base.html' %}
+{% block title %}Produtos{% endblock %}
+{% block content %}
+<section>
+  {% if user.is_staff %}
+    <h3 class="mx-4 mt-3" style="color: white">Produtos cadastrados:</h3>
+  {% else %}
+    <h3 class="mx-4 mt-3" style="color: white">Produtos:</h3>
+  {% endif %}
+  <div class="container mt-4">
+    <div class="row g-1" id="produtos-list">
+      {% for produto in produtos %}
+        <div class="col-md-2" data-produto-id="{{ produto.id }}">
+          <div class="card">
+            <img src="{{ produto.imagem_url|default:'https://via.placeholder.com/200' }}" class="card-img-top" alt="Produto">
+            <div class="card-body">
+              <h5 class="card-title">{{ produto.nome }}</h5>
+              <p class="card-text">{{ produto.descricao }}</p>
+              <p class="card-text">Preço: R${{ produto.preco }}</p>
+              <p class="card-text">Estoque: {{ produto.estoque }}</p>
+              {% if not user.is_staff %}
+                <button class="btn btn-primary btn-sm adicionar-carrinho" data-id="{{ produto.id }}">Adicionar ao carrinho</button>
+              {% endif %}
+              {% if user.is_staff or produto.usuario == user %}
+                <button class="btn btn-danger btn-sm deletar-produto" data-id="{{ produto.id }}">Deletar</button>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('produtos-list').addEventListener('click', function(e) {
+        if (e.target.classList.contains('deletar-produto')) {
+            const produtoId = e.target.getAttribute('data-id');
+            if (confirm('Deseja realmente deletar este produto?')) {
+                fetch(`/produtos/delete/${produtoId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Erro ao deletar produto');
+                    // Remove o card do DOM
+                    const card = e.target.closest('[data-produto-id]');
+                    if (card) card.remove();
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
+            }
+        }
+
+        // Adicionar ao carrinho
+        if (e.target.classList.contains('adicionar-carrinho')) {
+            const produtoId = e.target.getAttribute('data-id');
+            fetch(`/carrinho/add/${produtoId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message || 'Produto adicionado ao carrinho!');
+                atualizarCarrinho();
+            })
+            .catch(error => {
+                alert('Erro ao adicionar ao carrinho');
+            });
+        }
+    });
+});
+</script>
+{% endblock %}

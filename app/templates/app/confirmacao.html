@@ -1,0 +1,62 @@
+{% extends 'app/base.html' %}
+{% block title %}Confirmação do Carrinho{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h3 style="color: white;">Confirmação do Carrinho</h3>
+  {% if produtos %}
+    <ul class="list-group" id="lista-produtos">
+      {% for produto in produtos %}
+        <li class="list-group-item">
+          <strong>{{ produto.nome }}</strong> - R${{ produto.preco }}
+        </li>
+      {% endfor %}
+    </ul>
+    <h5 class="mt-3" id="total-compra">Total: R${{ total }}</h5>
+    <button id="finalizar-compra" class="btn btn-success mt-3">Finalizar Compra</button>
+    <div id="mensagem-finalizacao" class="alert alert-success mt-3" style="display:none;">
+      Compra finalizada com sucesso!<br>
+      Um e-mail de confirmação foi enviado para <strong>{{ user.email }}</strong>.
+    </div>
+    <div id="mensagem-erro" class="alert alert-danger mt-3" style="display:none;"></div>
+    <div class="justify-content-center">
+        <img id="imagem-finalizacao" src="https://res.cloudinary.com/dxhx9tcow/image/upload/v1754607239/ChatGPT_Image_7_de_ago._de_2025_19_50_00_erabgg.png" alt="" style="display: none;">
+    </div>
+  {% else %}
+    <p style="color: white;">Seu carrinho está vazio.</p>
+  {% endif %}
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const btn = document.getElementById('finalizar-compra');
+  if (btn) {
+    btn.onclick = function() {
+      btn.disabled = true;
+      fetch('/carrinho/finalizar/', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(data => { throw new Error(data.message || 'Erro ao finalizar'); });
+        }
+        return response.json();
+      })
+      .then(data => {
+        document.getElementById('mensagem-finalizacao').style.display = 'block';
+        document.getElementById('imagem-finalizacao').style.display = 'block';
+        document.getElementById('lista-produtos').innerHTML = '';
+        document.getElementById('total-compra').textContent = '';
+      })
+      .catch((error) => {
+        document.getElementById('mensagem-erro').style.display = 'block';
+        document.getElementById('mensagem-erro').textContent = error.message;
+        btn.disabled = false;
+      });
+    }
+  }
+});
+</script>
+{% endblock %}

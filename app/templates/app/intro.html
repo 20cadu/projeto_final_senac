@@ -1,0 +1,40 @@
+{% extends 'app/base.html' %}
+{% block title %}Vídeo Fullscreen{% endblock %}
+{% load static %}
+{% block content %}
+<div class="video-container">
+    <video autoplay muted>
+        <source src="{% static 'videos/Apresentao_de_Logotipo__Business_Minimalista_free.mp4_1754357114669.mp4' %}" type="video/mp4">
+    </video>
+</div>
+
+<script>
+    setTimeout(() => {
+        window.location.href = "{% url 'main' %}";
+    }, 7000);
+</script>
+
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .video-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+    }
+
+    video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+</style>
+{% endblock %}
