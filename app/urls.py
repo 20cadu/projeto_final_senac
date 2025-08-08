@@ -4,9 +4,8 @@ from . import views
 from .views import ProdutoDeleteView, MainView, SignUpView, HomeView, IntroView, ProdutosView, CarrinhoConfirmarView, CarrinhoAddView, CarrinhoListView, CarrinhoFinalizarView
 
 urlpatterns = [
-    path('', IntroView.as_view(), name='intro'),
     path('base', HomeView.as_view(),name='home'),
-    path('main', MainView.as_view(), name='main' ),
+    path('', MainView.as_view(), name='main' ),
     path('produtos', ProdutosView.as_view(), name='produtos'),
     path('produtos/delete/<int:pk>/', ProdutoDeleteView.as_view(), name='delete_produto'),
     path('carrinho/confirmar/', CarrinhoConfirmarView.as_view(), name='carrinho_confirmar'),
