@@ -18,7 +18,7 @@ class Usuario(models.Model):
 class Produto(models.Model):
     nome = models.CharField(max_length=100)
     descricao = models.CharField(max_length=500)
-    preco = models.IntegerField()
+    preco = models.DecimalField(max_digits=10, decimal_places=2)
     estoque = models.IntegerField()
     imagem = CloudinaryField('imagem', blank=True, null=True)
 
