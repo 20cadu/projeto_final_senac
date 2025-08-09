@@ -55,6 +55,29 @@ function getCookie(name) {
 
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('produtos-list').addEventListener('click', function(e) {
+        if (e.target.classList.contains('deletar-produto')) {
+            const produtoId = e.target.getAttribute('data-id');
+            if (confirm('Deseja realmente deletar este produto?')) {
+                fetch(`/produtos/delete/${produtoId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Erro ao deletar produto');
+                    // Remove o card do DOM
+                    const card = e.target.closest('[data-produto-id]');
+                    if (card) card.remove();
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
+            }
+        }
+
         if (e.target.classList.contains('adicionar-carrinho')) {
             const produtoId = e.target.getAttribute('data-id');
             fetch(`/carrinho/add/${produtoId}/`, {
@@ -67,21 +90,15 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(response => {
                 if (response.status === 401) {
-                    // Usuário não autenticado, redirecionar para login
-                    window.location.href = '/login/?next=' + window.location.pathname;
+                    alert('Você precisa estar logado para adicionar produtos ao carrinho.');
+                    window.location.href = '/login/';
                     throw new Error('Usuário não autenticado');
-                }
-                if (!response.ok) {
-                    throw new Error('Erro na requisição');
                 }
                 return response.json();
             })
             .then(data => {
                 alert(data.message || 'Produto adicionado ao carrinho!');
-                // Supondo que você tenha a função atualizarCarrinho() para atualizar o contador do carrinho
-                if (typeof atualizarCarrinho === 'function') {
-                    atualizarCarrinho();
-                }
+                atualizarCarrinho();
             })
             .catch(error => {
                 if (error.message !== 'Usuário não autenticado') {
