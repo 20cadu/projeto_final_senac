@@ -1,76 +1,55 @@
 {% extends 'app/base.html' %}
+{% load widget_tweaks %}
 {% block title %}Cadastro de Produtos{% endblock %}
 {% block content %}
 <section>
   <h3 class="mx-4 mt-3" style="color: white">Cadastro de produtos:</h3>
   <div class="container mt-4">
-    <form id="produto-form" method="post">
+    <form id="produto-form" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
       {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Adicionar Produto</button>
+      <div class="mb-3">
+        {{ form.nome.label_tag }}
+        {{ form.nome|add_class:"form-control" }}
+        <div class="invalid-feedback">Por favor, insira o nome do produto.</div>
+      </div>
+      <div class="mb-3">
+        {{ form.descricao.label_tag }}
+        {{ form.descricao|add_class:"form-control" }}
+        <div class="invalid-feedback">Por favor, insira a descrição.</div>
+      </div>
+      <div class="mb-3">
+        {{ form.preco.label_tag }}
+        {{ form.preco|add_class:"form-control" }}
+        <div class="invalid-feedback">Por favor, insira o preço.</div>
+      </div>
+      <div class="mb-3">
+        {{ form.estoque.label_tag }}
+        {{ form.estoque|add_class:"form-control" }}
+        <div class="invalid-feedback">Por favor, informe o estoque.</div>
+      </div>
+      <div class="mb-3">
+        {{ form.imagem.label_tag }}
+        {{ form.imagem|add_class:"form-control" }}
+      </div>
+      <button type="submit" class="btn btn-primary">Adicionar Produto</button>
     </form>
-
-    <h4 class="mt-5" style="color: white;">Produtos cadastrados:</h4>
-    <ul>
-      {% for produto in produtos %}
-        <li>{{ produto.nome }}</li>
-      {% empty %}
-        <li style="color: white;">Nenhum produto cadastrado.</li>
-      {% endfor %}
-    </ul>
   </div>
 </section>
 
 <script>
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let cookie of cookies) {
-            cookie = cookie.trim();
-            if (cookie.startsWith(name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-  const form = document.getElementById('produto-form');
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const formData = new FormData(form);
-
-      fetch('produtos', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'X-CSRFToken': getCookie('csrftoken'),
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      })
-    .then(response => {
-      if (!response.ok) {
-        // Tenta ler json com erro
-        return response.json().then(errData => {
-          throw new Error(JSON.stringify(errData.errors || errData));
-        });
+// Bootstrap validation example (optional)
+(() => {
+  'use strict'
+  const forms = document.querySelectorAll('.needs-validation')
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
       }
-      return response.json();
-    })
-    .then(data => {
-      // Redireciona para main após cadastrar
-      window.location.href = '/';
-    })
-    .catch(error => {
-      alert('Erro ao adicionar produto:\n' + error.message);
-      console.error('Erro:', error);
-    });
-  });
-});
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
 </script>
 {% endblock %}

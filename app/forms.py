@@ -1,6 +1,8 @@
+from cloudinary.forms import CloudinaryFileField
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.forms import ClearableFileInput
 
 from .models import Usuario, Produto
 
@@ -18,4 +20,4 @@ class SignUpForm(UserCreationForm):
 class ProdutoForm(forms.ModelForm):
     class Meta:
         model = Produto
-        fields = ['nome', 'descricao', 'preco', 'estoque','imagem_url']
+        fields = ['nome', 'descricao', 'preco', 'estoque', 'imagem']

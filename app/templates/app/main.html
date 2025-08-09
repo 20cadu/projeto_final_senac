@@ -12,17 +12,22 @@
       {% for produto in produtos %}
         <div class="col-md-2" data-produto-id="{{ produto.id }}">
           <div class="card">
-            <img src="{{ produto.imagem_url|default:'https://via.placeholder.com/200' }}" class="card-img-top" alt="Produto">
+            <img src="{{ produto.imagem.url|default:'https://via.placeholder.com/200' }}" class="card-img-top" alt="Produto">
             <div class="card-body">
               <h5 class="card-title">{{ produto.nome }}</h5>
               <p class="card-text">{{ produto.descricao }}</p>
               <p class="card-text">Preço: R${{ produto.preco }}</p>
               <p class="card-text">Estoque: {{ produto.estoque }}</p>
+
               {% if not user.is_staff %}
                 <button class="btn btn-primary btn-sm adicionar-carrinho" data-id="{{ produto.id }}">Adicionar ao carrinho</button>
               {% endif %}
+
               {% if user.is_staff or produto.usuario == user %}
-                <button class="btn btn-danger btn-sm deletar-produto" data-id="{{ produto.id }}">Deletar</button>
+                <div class="d-flex gap-2 mt-2">
+                  <a href="{% url 'editar-produto' produto.id %}" class="btn btn-warning btn-sm flex-fill">Editar</a>
+                  <button class="btn btn-danger btn-sm flex-fill deletar-produto" data-id="{{ produto.id }}">Deletar</button>
+                </div>
               {% endif %}
             </div>
           </div>

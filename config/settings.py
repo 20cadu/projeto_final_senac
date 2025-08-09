@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
+
+import cloudinary
 from django.urls import reverse_lazy
 from dotenv import load_dotenv
 load_dotenv()
@@ -101,6 +103,8 @@ EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
 
 # Storage settings
 CLOUDINARY_URL= os.getenv('CLOUDINARY_URL')
+
+cloudinary.config(cloudinary_url=os.getenv('CLOUDINARY_URL'))
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

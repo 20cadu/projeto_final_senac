@@ -1,0 +1,16 @@
+{% extends 'app/base.html' %}
+{% load widget_tweaks %}
+{% block title %}Editar Produto{% endblock %}
+{% block content %}
+<section>
+  <h3 class="mx-4 mt-3" style="color: white">Editar produto:</h3>
+  <div class="container mt-4">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Salvar</button>
+      <a href="{% url 'main' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+  </div>
+</section>
+{% endblock %}

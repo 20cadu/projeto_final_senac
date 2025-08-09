@@ -1,14 +1,15 @@
+import cloudinary.uploader
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.http import JsonResponse, HttpResponseNotAllowed
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import TemplateView, CreateView
+from django.views.generic import TemplateView, CreateView, UpdateView
 
 from app.forms import SignUpForm, ProdutoForm
 from app.models import Usuario, Produto
@@ -65,20 +66,34 @@ class ProdutosView(View):
         })
 
     def post(self, request, *args, **kwargs):
-        form = ProdutoForm(request.POST, request.FILES)  # Adiciona suporte a arquivos (caso use imagem)
+        form = ProdutoForm(request.POST, request.FILES)
         if form.is_valid():
-            produto = form.save()
-            data = {
-                'id': produto.id,
-                'nome': produto.nome,
-                'descricao': produto.descricao,
-                'imagem_url': produto.imagem_url or 'https://via.placeholder.com/200',
-                'preco': produto.preco or 0,
-                'estoque': produto.estoque or 0
-            }
-            return JsonResponse(data)
-        else:
-            return JsonResponse({'errors': form.errors}, status=400)
+            form.save()
+            return redirect('main')  # Redireciona para a URL nomeada 'main'
+        return render(request, 'app/produtos.html', {
+            'form': form
+        })
+
+class ProdutoEditView(View):
+    def get(self, request, pk):
+        produto = get_object_or_404(Produto, pk=pk)
+        form = ProdutoForm(instance=produto)
+        return render(request, 'app/produto_edit.html', {'form': form, 'produto': produto})
+
+    def post(self, request, pk):
+        produto = get_object_or_404(Produto, pk=pk)
+        form = ProdutoForm(request.POST, request.FILES, instance=produto)
+        if form.is_valid():
+            nova_imagem = form.cleaned_data.get('imagem')
+            if nova_imagem:
+                if produto.imagem:
+                    try:
+                        cloudinary.uploader.destroy(produto.imagem.public_id)
+                    except Exception as e:
+                        print("Erro ao deletar imagem antiga:", e)
+            form.save()
+            return redirect('main')
+        return render(request, 'app/produto_edit.html', {'form': form, 'produto': produto})
 
 class ProdutoDeleteView(View):
     def delete(self, request, pk):

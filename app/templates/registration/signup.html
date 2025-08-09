@@ -12,10 +12,6 @@
         {{ field.errors }}
     </div>
     {% endfor %}
-    <div class="form-check mb-3">
-        <input class="form-check-input" type="checkbox" id="is_staff" name="is_staff">
-        <label class="form-check-label" for="is_staff" style="color:white;">Cadastrar como staff</label>
-    </div>
     <button type="submit" class='btn btn-success'>Cadastrar</button>
     <a href="{% url 'login' %}" class="btn btn-secondary">Cancelar</a>
 </form>
