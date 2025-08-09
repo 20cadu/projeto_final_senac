@@ -125,12 +125,15 @@ class CarrinhoConfirmarView(LoginRequiredMixin, View):
 
 class CarrinhoAddView(View):
     def post(self, request, produto_id):
+        if not request.session.session_key:
+            request.session.create()  # força criação da sessão
+
         carrinho = request.session.get('carrinho', {})
-        produto_id = str(produto_id)  # usar string como chave para sessão
+        produto_id = str(produto_id)
         if produto_id in carrinho:
-            carrinho[produto_id] += 1  # incrementa a quantidade
+            carrinho[produto_id] += 1
         else:
-            carrinho[produto_id] = 1   # adiciona com quantidade 1
+            carrinho[produto_id] = 1
         request.session['carrinho'] = carrinho
         request.session.modified = True
         return JsonResponse({'message': 'Produto adicionado ao carrinho!'})
